@@ -1,0 +1,130 @@
+{
+  "info": {
+    "name": "Sistema de Ventas NestJS",
+    "description": "Colección de la API de ventas (Strategy + Chain of Responsibility)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:3000" }],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        { "name": "Listar", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/productos?page=1&limit=20" } },
+        { "name": "Obtener", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/productos/1" } },
+        {
+          "name": "Crear",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Teclado mecanico\",\n  \"precio\": 45000,\n  \"stock\": 10\n}" },
+            "url": "{{baseUrl}}/api/v1/productos"
+          }
+        },
+        {
+          "name": "Actualizar (parcial)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"stock\": 20\n}" },
+            "url": "{{baseUrl}}/api/v1/productos/1"
+          }
+        },
+        { "name": "Eliminar", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/v1/productos/1" } }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "item": [
+        { "name": "Listar", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/clientes" } },
+        { "name": "Obtener", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/clientes/1" } },
+        {
+          "name": "Crear (tipo VIP)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Ana Lopez\",\n  \"email\": \"ana@email.com\",\n  \"bloqueado\": false,\n  \"tipo\": \"VIP\"\n}" },
+            "url": "{{baseUrl}}/api/v1/clientes"
+          }
+        },
+        {
+          "name": "Actualizar tipo (parcial)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"tipo\": \"PREMIUM\"\n}" },
+            "url": "{{baseUrl}}/api/v1/clientes/1"
+          }
+        },
+        { "name": "Eliminar", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/v1/clientes/1" } }
+      ]
+    },
+    {
+      "name": "Ventas",
+      "item": [
+        { "name": "Listar", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/ventas" } },
+        { "name": "Obtener", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/ventas/1" } },
+        {
+          "name": "Cotizar (Strategy, no crea la venta)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"clienteId\": 4,\n  \"productoId\": 1,\n  \"cantidad\": 11,\n  \"envio\": \"EXPRESS\",\n  \"promociones\": [\"PROMO5\"]\n}" },
+            "url": "{{baseUrl}}/api/v1/ventas/cotizar"
+          }
+        },
+        {
+          "name": "Crear - aprobada",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"clienteId\": 4,\n  \"productoId\": 2,\n  \"cantidad\": 5,\n  \"envio\": \"NORMAL\",\n  \"promociones\": [],\n  \"pago\": { \"medio\": \"TARJETA\", \"saldoDisponible\": 500000 }\n}" },
+            "url": "{{baseUrl}}/api/v1/ventas"
+          }
+        },
+        {
+          "name": "Crear - Black Friday",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"clienteId\": 4,\n  \"productoId\": 2,\n  \"cantidad\": 2,\n  \"envio\": \"EXPRESS\",\n  \"promociones\": [\"PROMO5\", \"BLACK_FRIDAY\"],\n  \"pago\": { \"medio\": \"TARJETA\", \"saldoDisponible\": 500000 }\n}" },
+            "url": "{{baseUrl}}/api/v1/ventas"
+          }
+        },
+        {
+          "name": "Crear - rechazada por cliente bloqueado",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"clienteId\": 3,\n  \"productoId\": 1,\n  \"cantidad\": 1,\n  \"pago\": { \"medio\": \"TARJETA\", \"saldoDisponible\": 500000 }\n}" },
+            "url": "{{baseUrl}}/api/v1/ventas"
+          }
+        },
+        {
+          "name": "Crear - rechazada por stock",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"clienteId\": 1,\n  \"productoId\": 3,\n  \"cantidad\": 99,\n  \"pago\": { \"medio\": \"TARJETA\", \"saldoDisponible\": 99999999 }\n}" },
+            "url": "{{baseUrl}}/api/v1/ventas"
+          }
+        },
+        {
+          "name": "Crear - rechazada por pago",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"clienteId\": 1,\n  \"productoId\": 1,\n  \"cantidad\": 1,\n  \"pago\": { \"medio\": \"TARJETA\", \"saldoDisponible\": 100 }\n}" },
+            "url": "{{baseUrl}}/api/v1/ventas"
+          }
+        },
+        { "name": "Cancelar", "request": { "method": "DELETE", "url": "{{baseUrl}}/api/v1/ventas/1" } }
+      ]
+    }
+  ]
+}

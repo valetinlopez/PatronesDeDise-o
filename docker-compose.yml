@@ -1,0 +1,18 @@
+services:
+  app:
+    build: .
+    container_name: patrones-ventas
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_PATH: /app/data/sistema-ventas.db
+      DB_SYNCHRONIZE: "true"
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    volumes:
+      - ventas_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  ventas_data:
